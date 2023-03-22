@@ -119,6 +119,7 @@ TOKEN:
 |<RBRACKET: "]"> 
 |<COMMA: ","> 
 |<SEMICOLON: ";"> 
+| <PUNTOS : ":">
 |<NUMBER: (["0"-"9"])+> 
 |<IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9"])*> 
 |<CHIPS: "Chips>
@@ -138,16 +139,38 @@ TOKEN:
 	}
 	void comandos():
 	{
-
+		int num1;
+		int num2;
+		string ele1;
+		string ele2;
+		string ele3;
 	}
 	{
-		(<GOTO> ":"VerifyVARNum() <COMMA> VerifyVARNum())
+		(
+		<GOTO> <PUNTOS> num1=VerifyVARNum() <COMMA> num2=VerifyVARNum(){world.setPostion(num1,num2)}
+		)
 	}
 	
 	void VerifyVARNum():
-	{}
 	{
-		(<IDENTIFIER>|<NUMBER>)
+		int numberI=0;
+	}
+	{
+		(<IDENTIFIER>
+		
+		
+		|<NUMBER>{
+			try 
+			{
+				numberI = Integer.parseInt(token.image);
+			} 
+			catch (NumberFormatException ee) 
+			{
+				throw new Error("Number out of bounds: "+token.image+" !!");
+			}
+			return numberI;
+			}
+		)
 	}
 
 
@@ -162,5 +185,3 @@ TOKEN:
 	{
 		<NORTH> | <SOUTH> | <WEST> | <EAST>
 	}
-
-	

@@ -55,118 +55,133 @@ SKIP:
 	|	"\t"
 	| "\n"
 }
-
-TOKEN: /* Nombres de Comandos */
+// Keywords
+TOKEN: 
 {
-
-			<MOV:  "Mov">
-		| 	<RIGHT: "RIGHT">
-		| 	<PUT: "Put">
-		| 	<PICK: "Pick">
-		|  < POP: "Pop" >
-		|  <GO: "GO" >
-        |  < HOP:  "HOP" >		
-
+  <ROBOT_R: "ROBOT_R"> 
+|  <VARS: "VARS"> 
+|  <PROCS: "PROCS"> 
+|  <IF: "if"> 
+|  <THEN: "then"> 
+|  <ELSE: "else"> 
+|  <WHILE: "while"> 
+|  <DO: "do"> 
+|  <REPEAT: "repeat"> 
 }
 
-TOKEN:
+// Commands
+TOKEN: 
 {
-		<BALLOONS:  "BALLOONS" >
-		|	<CHIPS:     "CHIPS"  >	
+<ASSIGNTO: "assignTo"> 
+|  <GOTO: "goto"> 
+|  <MOVE: "move"> 
+|  <TURN: "turn"> 
+|  <FACE: "face"> 
+|  <PUT: "put"> 
+|  <PICK: "pick"> 
+|  <MOVE_TO_THE: "moveToThe"> 
+|  <MOVE_IN_DIR: "moveInDir"> 
+|  <JUMP_TO_THE: "jumpToThe"> 
+|  <JUMP_IN_DIR: "jumpInDir"> 
+|  <NOP: "nop"> 
+|  <POP: "pop"> 
+|  <HOP: "hop"> 
+|  <GO: "go"> }
 
+
+// Conditions
+TOKEN: 
+{
+ <FACING: "facing"> 
+|  <CAN_PUT: "canPut"> 
+|  <CAN_PICK: "canPick"> 
+|  <CAN_MOVE_IN_DIR: "canMoveInDir"> 
+|  <CAN_JUMP_IN_DIR: "canJumpInDir"> 
+|  <CAN_MOVE_TO_THE: "canMoveToThe"> 
+|  <CAN_JUMP_TO_THE: "canJumpToThe"> 
+|  <NOT: "not"> 
 }
 
-
-
-TOKEN :
+// Other tokens
+TOKEN: 
 {
-		<NUM: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >
-        
+<RIGHT: "right"> 
+|<FRONT:"front">
+|<LEFT:"left">
+|<BACK:"back">
+|<NORTH: "north">
+|<SOUTH: "south">
+|<WEST: "west">
+|<EAST:"east">
+|<LPAREN: "("> 
+|<RPAREN: ")"> 
+|<LBRACKET: "["> 
+|<RBRACKET: "]"> 
+|<COMMA: ","> 
+|<SEMICOLON: ";"> 
+| <PUNTOS : ":">
+|<NUMBER: (["0"-"9"])+> 
+|<IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9"])*> 
+|<CHIPS: "Chips>
+|<BALLOONS: "Balloons"> 
 }
-
 
 
 	//boolean command(uniandes.lym.robot.view.Console sistema) :
 	boolean command(Console sistema):
 	{	
-		
 		int x,y;
 		salida=new String();	
-	}
-
-	
+	}	
 	{
-		(		  (
-		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
-		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
-		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
-		|  <PUT> "("  put() ")"					  			
-		|  <PICK> "(" get()  ")"	
-	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
-		) ";" 
-
-		{
-		    try {
-	    			 Thread.sleep(900);
-	    	    } catch (InterruptedException e) {
-	    			        System.err.format("IOException: %s%n", e);
-	    		    }
-	    			 
-			sistema.printOutput(salida);
-			return true;
-		})+
-
+		comandos() {return true;} 
     	| <EOF> {return false;} 
 	}
-
-	void put() :
+	void comandos():
 	{
-		int f=1;	
+		int num1;
+		int num2;
+		string ele1;
+		string ele2;
+		string ele3;
 	}
 	{
-		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
-		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
-
+		(
+		<GOTO> <PUNTOS> num1=VerifyVARNum() <COMMA> num2=VerifyVARNum(){world.setPostion(num1,num2)}
+		)
 	}
-
-	void get() :
-	{
-		int f=1;	
-	}
-	{
-		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
-		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
-
-	}
-
 	
-	
-
-	/**
-	 * Unsigned decimal number
-	 * @return the corresponding value of the string
-	 * @error  corresponding value is too large
-	 */
-
-	int num() throws Error:
-	{	
-		int total=1;
+	void VerifyVARNum():
+	{
+		int numberI=0;
 	}
 	{
-		<NUM>
-		{
+		(<IDENTIFIER>
+		
+		
+		|<NUMBER>{
 			try 
 			{
-				total = Integer.parseInt(token.image);
+				numberI = Integer.parseInt(token.image);
 			} 
 			catch (NumberFormatException ee) 
 			{
 				throw new Error("Number out of bounds: "+token.image+" !!");
 			}
-			return total;
-		}
+			return numberI;
+			}
+		)
 	}
 
-	
+
+	void VerifyDirection():
+	{}
+	{
+		<RIGHT> | <FRONT> | <LEFT> | <BACK>
+	}
+
+	void VerifyDirection1():
+	{}
+	{
+		<NORTH> | <SOUTH> | <WEST> | <EAST>
+	}

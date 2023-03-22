@@ -55,36 +55,67 @@ SKIP:
 	|	"\t"
 	| "\n"
 }
-
-TOKEN: /* Nombres de Comandos */
+// Keywords
+TOKEN: 
 {
-
-			<MOV:  "Mov">
-		| 	<RIGHT: "RIGHT">
-		| 	<PUT: "Put">
-		| 	<PICK: "Pick">
-		|  < POP: "Pop" >
-		|  <GO: "GO" >
-        |  < HOP:  "HOP" >		
-
+  <ROBOT_R: "ROBOT_R"> 
+|  <VARS: "VARS"> 
+|  <PROCS: "PROCS"> 
+|  <IF: "if"> 
+|  <THEN: "then"> 
+|  <ELSE: "else"> 
+|  <WHILE: "while"> 
+|  <DO: "do"> 
+|  <REPEAT: "repeat"> 
 }
 
-TOKEN:
+// Commands
+TOKEN: 
 {
-		<BALLOONS:  "BALLOONS" >
-		|	<CHIPS:     "CHIPS"  >	
+<ASSIGNTO: "assignTo"> 
+|  <GOTO: "goto"> 
+|  <MOVE: "move"> 
+|  <TURN: "turn"> 
+|  <FACE: "face"> 
+|  <PUT: "put"> 
+|  <PICK: "pick"> 
+|  <MOVE_TO_THE: "moveToThe"> 
+|  <MOVE_IN_DIR: "moveInDir"> 
+|  <JUMP_TO_THE: "jumpToThe"> 
+|  <JUMP_IN_DIR: "jumpInDir"> 
+|  <NOP: "nop"> 
+|  <POP: "pop"> 
+|  <HOP: "hop"> 
+|  <GO: "go"> }
 
+
+// Conditions
+TOKEN: 
+{
+ <FACING: "facing"> 
+|  <CAN_PUT: "canPut"> 
+|  <CAN_PICK: "canPick"> 
+|  <CAN_MOVE_IN_DIR: "canMoveInDir"> 
+|  <CAN_JUMP_IN_DIR: "canJumpInDir"> 
+|  <CAN_MOVE_TO_THE: "canMoveToThe"> 
+|  <CAN_JUMP_TO_THE: "canJumpToThe"> 
+|  <NOT: "not"> 
 }
 
-
-
-TOKEN :
+// Other tokens
+TOKEN: 
 {
-		<NUM: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >
-        
-}
 
+   <RIGHT: "right"> 
+|  <LPAREN: "("> 
+|  <RPAREN: ")"> 
+|  <LBRACKET: "["> 
+|  <RBRACKET: "]"> 
+|  <COMMA: ","> 
+|  <SEMICOLON: ";"> 
+|  <NUMBER: (["0"-"9"])+> 
+|  <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9"])*> 
+}
 
 
 	//boolean command(uniandes.lym.robot.view.Console sistema) :
@@ -97,7 +128,8 @@ TOKEN :
 
 	
 	{
-		(		  (
+		(
+		  (
 		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
 		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
 		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}

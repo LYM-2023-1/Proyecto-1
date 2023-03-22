@@ -105,25 +105,25 @@ TOKEN:
 // Other tokens
 TOKEN: 
 {
-<RIGHT: "right"> 
+<RIGHT:"right"> 
 |<FRONT:"front">
 |<LEFT:"left">
 |<BACK:"back">
-|<NORTH: "north">
-|<SOUTH: "south">
-|<WEST: "west">
+|<NORTH:"north">
+|<SOUTH:"south">
+|<WEST:"west">
 |<EAST:"east">
-|<LPAREN: "("> 
-|<RPAREN: ")"> 
-|<LBRACKET: "["> 
-|<RBRACKET: "]"> 
-|<COMMA: ","> 
-|<SEMICOLON: ";"> 
-| <PUNTOS : ":">
-|<NUMBER: (["0"-"9"])+> 
-|<IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9"])*> 
-|<CHIPS: "Chips>
-|<BALLOONS: "Balloons"> 
+|<LPAREN:"("> 
+|<RPAREN:")"> 
+|<LBRACKET:"["> 
+|<RBRACKET:"]"> 
+|<COMMA:","> 
+|<SEMICOLON:";"> 
+| <PUNTOS:":">
+|<NUMBER:(["0"-"9"])+> 
+|<IDENTIFIER:(["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9"])*> 
+|<CHIPS:"chips>
+|<BALLOONS:"balloons"> 
 }
 
 
@@ -134,9 +134,12 @@ TOKEN:
 		salida=new String();	
 	}	
 	{
-		comandos() {return true;} 
-    	| <EOF> {return false;} 
+		comandos() {salida = "Command: Turnright";} 
+    	
 	}
+
+
+
 	void comandos():
 	{
 		int num1;
@@ -147,33 +150,48 @@ TOKEN:
 	}
 	{
 		(
-		<GOTO> <PUNTOS> num1=VerifyVARNum() <COMMA> num2=VerifyVARNum(){world.setPostion(num1,num2)}
+		<GOTO> <PUNTOS> num1=VerifyVARNum() <COMMA> num2=VerifyVARNum()<SEMICOLON>{world.setPostion(num1,num2)}
+		|<MOVE> <PUNTOS>  num1=VerifyVARNum() <SEMICOLON>{world.moveForward(NUM1,false)}
+		|<TURN> <PUNTOS> (<RIGHT> |<FRONT>|<LEFT>|<BACK>)<SEMICOLON>{world.turnRight()}
+		|<FACE> <PUNTOS> (<NORTH>|<SOUTH>|<WEST>|<EAST>)<SEMICOLON>{world.turnRight()}
+		|<PUT> <PUNTOS> num1=VerifyVARNum() <COMMA> <CHIPS> <SEMICOLON>{}
+		|<PUT> <PUNTOS> num1=VerifyVARNum() <COMMA> <BALLOONS> <SEMICOLON>{}
+		|<PICK> <PUNTOS>num1=VerifyVARNum() <COMMA> <CHIPS> <SEMICOLON>{}
+		|<PICK> <PUNTOS>num1=VerifyVARNum() <COMMA> <BALLOONS> <SEMICOLON>{}
+		|<MOVE_TO_THE> <PUNTOS> num1=VerifyVARNum() <COMMA>(<RIGHT> |<FRONT>|<LEFT>|<BACK>)<SEMICOLON>{}
+		|<MOVE_IN_DIR> <PUNTOS>num1=VerifyVARNum() <COMMA>(<NORTH>|<SOUTH>|<WEST>|<EAST>)<SEMICOLON>{}
+		|<JUMP_TO_THE> <PUNTOS>num1=VerifyVARNum() <COMMA>(<RIGHT> |<FRONT>|<LEFT>|<BACK>)<SEMICOLON>{}
+		|<JUMP_IN_DIR> <PUNTOS>num1=VerifyVARNum() <COMMA>(<NORTH>|<SOUTH>|<WEST>|<EAST>)<SEMICOLON>{}
 		)
+		
+		
 	}
 	
-	void VerifyVARNum():
+	int VerifyVARNum():
 	{
 		int numberI=0;
 	}
 	{
 		(<IDENTIFIER>
-		
-		
-		|<NUMBER>{
+		|NumV()
+		)
+	}
+
+	int NumV():
+	{int result=0;}
+	{<NUMBER>{
 			try 
 			{
-				numberI = Integer.parseInt(token.image);
+				result = Integer.parseInt(token.image);
 			} 
 			catch (NumberFormatException ee) 
 			{
 				throw new Error("Number out of bounds: "+token.image+" !!");
 			}
-			return numberI;
+			return result;
 			}
-		)
 	}
-
-
+	
 	void VerifyDirection():
 	{}
 	{

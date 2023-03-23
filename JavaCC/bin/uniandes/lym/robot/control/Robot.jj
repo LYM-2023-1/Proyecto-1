@@ -142,15 +142,21 @@ TOKEN:
 	void General():
 	{}
 	{
-		<START> (VarsDec()|ProDecl|BlockInstr())+
+		<START> (VarsDec()|ProDecl()|BlockInstr())+
 	}
 
 	void VarsDec():
 	{}
 	{
-		<VARS> (<IDENTIFIER>|<COMMA>)+ <SEMICOLON>
+		<VARS> (<IDENTIFIER>|<COMMA>)+ 
 	}
-	
+
+	void ProDecl():
+	{}
+	{
+		<PROCS> <LBRACKET>"|" (<IDENTIFIER>|<COMMA>)+ "|" (comandos()|control()|procedure())+ <RBRACKET>
+	}
+
 
 	void comandos():
 	{
@@ -221,26 +227,15 @@ TOKEN:
 
 
 	void BlockInstr()
-	{
-		int num1;
-		int num2;
-		string ele1;
-		string ele2;
-		string ele3;
-	}
+	{}
 	{
 		<LBRACKET> (comandos()|control()|procedure())+ <RBRACKET>
 	}
+
 	void procedure()
+	{	}
 	{
-		int num1;
-		int num2;
-		string ele1;
-		string ele2;
-		string ele3;
-	}
-	{
-		
+		<IDENTIFIER><PUNTOS> (VerifyVARNum()|<COMMA>)+ <SEMICOLON>
 	}
 
 
